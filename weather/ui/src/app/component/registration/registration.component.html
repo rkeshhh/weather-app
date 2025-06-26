@@ -1,0 +1,63 @@
+<!-- Create HTML registration form -->
+<div class="container">
+  <div class="col-md-6 col-md-offset-3">
+    <!-- success message -->
+    <!--div th:if="${param.success}">
+        <div class="alert alert-info">You've successfully registered
+          to our awesome app!</div>
+      </div-->
+    <h1>Registration</h1>
+
+    <form [formGroup]="regFormGroup" (ngSubmit)="onSubmit()">
+      <div class="form-group">
+        <label class="control-label" for="firstName"> Name </label>
+        <input
+          id="firstName"
+          class="form-control"
+          formControlName="name"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="control-label" for="userName"> UserName </label>
+        <input
+          id="userName"
+          class="form-control"
+          formControlName="userName"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="control-label" for="phone"> Phone </label>
+        <input
+          id="phone"
+          class="form-control"
+          formControlName="phone"
+          required
+        />
+      </div>
+
+      <div class="form-group">
+        <label class="control-label" for="password"> Password </label>
+        <input
+          id="password"
+          class="form-control"
+          type="password"
+          formControlName="password"
+          required
+        />
+      </div>
+
+      <div class="form-group" style="text-align: center">
+        <button type="submit" class="btn btn-success">Register</button
+        ><br /><br />
+        <span style="font-size: large; font-weight: bold"
+          >Already registered?
+          <a href="/" style="color: red" href="/login">Login here </a>
+        </span>
+      </div>
+    </form>
+  </div>
+</div>

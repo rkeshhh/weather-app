@@ -1,0 +1,257 @@
+<div class="main">
+  <div id="widget-container">
+    <div class="container mt-3">
+      <div class="input-group col-lg-6 m-auto mt-lg-2">
+        <input
+          type="text"
+          placeholder="Enter City..."
+          #cityName
+          class="form-control"
+          style="border-radius: 20px"
+        />
+        <button
+          id="search-button"
+          (click)="getCity(cityName.value)"
+          value="Search"
+          type="submit"
+          class="btn btn-primary"
+        >
+          <i class="fas fa-search"></i>
+        </button>
+      </div>
+    </div>
+    <div style="display: flex; justify-content: flex-start; flex-wrap: wrap">
+      <button
+        type="button"
+        class="btn btn-primary mt-auto current"
+        (click)="getLocation(this.coords)"
+      >
+        <i class="fas fa-crosshairs"></i> Current
+      </button>
+      <button
+        *ngFor="let item of wishlist"
+        type="button"
+        class="btn btn-danger"
+        style="margin-left: 10px; margin-top: 10px"
+        (click)="getCity(item.city)"
+      >
+        {{ item.city }}
+      </button>
+    </div>
+    <div class="widget-info" *ngIf="!weatherData.main && !weatherData.error">
+      <div class="widget-city">
+        <h1 class="text-lg-center mt-xl-2">
+          Welcome. Please Start by Searching or use Current Location
+        </h1>
+      </div>
+    </div>
+    <div class="widget-info" *ngIf="weatherData.error && !weatherData.main">
+      <div class="widget-city">
+        <h1 class="text-lg-center mt-xl-2 text-capitalize">
+          {{ weatherData.error.message }}
+        </h1>
+      </div>
+    </div>
+    <div class="widget-info" *ngIf="weatherData.main">
+      <div class="widget-sub-info">
+        <div id="widget-city">
+          {{ weatherData.name }}
+          <button
+            id="search-button"
+            (click)="addToWishlist(weatherData)"
+            value="Search"
+            type="submit"
+            class="btn btn-primary"
+            *ngIf="loggedIn && showAddWishlist()"
+          >
+            Add WishList
+          </button>
+          <button
+            id="search-button"
+            (click)="removeFromWishlist()"
+            value="Search"
+            type="submit"
+            class="btn btn-danger"
+            *ngIf="loggedIn && showRemoveWishlist()"
+          >
+            Remove WishList
+          </button>
+          <h3>
+            {{ (weatherData.main.temp_min - 273.15).toFixed(2) }} °C /
+            {{ (weatherData.main.temp_max - 273.15).toFixed(2) }} °C
+          </h3>
+        </div>
+        <!-- widget-city -->
+        <div class="widget-details">
+          <div class="detail-img">
+            <img
+              src="http://openweathermap.org/img/wn/{{
+                weatherData.weather[0].icon
+              }}@2x.png"
+            />
+          </div>
+          <!-- detail-img -->
+          <div class="detail-text">
+            <h1>{{ weatherData.weather[0].main }}</h1>
+            <h3 class="text-capitalize">
+              {{ weatherData.weather[0].description }}
+            </h3>
+          </div>
+          <!-- detail-text -->
+        </div>
+        <!-- widget-deta -->
+      </div>
+      <div class="row w-100" id="widget-cards">
+        <div class="col-md-3">
+          <div class="card border-info mx-sm-1 p-3">
+            <div class="card border-info shadow text-info p-3">
+              <span class="fas fa-temperature-high" aria-hidden="true"></span>
+            </div>
+            <div class="text-info text-center mt-3">
+              <h4>Feels Like</h4>
+            </div>
+            <div class="text-info text-center mt-2">
+              <h1>
+                {{ (weatherData.main.feels_like - 273.15).toFixed(2) }} °C
+              </h1>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card border-success mx-sm-1 p-3">
+            <div class="card border-success shadow text-success p-3">
+              <span class="fas fa-water" aria-hidden="true"></span>
+            </div>
+            <div class="text-success text-center mt-3">
+              <h4>Humidity</h4>
+            </div>
+            <div class="text-success text-center mt-2">
+              <h1>{{ weatherData.main.humidity }} %</h1>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card border-danger mx-sm-1 p-3">
+            <div class="card border-danger shadow text-danger p-3">
+              <span class="fas fa-wind" aria-hidden="true"></span>
+            </div>
+            <div class="text-danger text-center mt-3">
+              <h4>Wind Speed</h4>
+            </div>
+            <div class="text-danger text-center mt-2">
+              <h1>{{ weatherData.wind.speed }} km/h</h1>
+            </div>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="card border-warning mx-sm-1 p-3">
+            <div class="card border-warning shadow text-warning p-3">
+              <span class="fas fa-cloud" aria-hidden="true"></span>
+            </div>
+            <div class="text-warning text-center mt-3">
+              <h4>Pressure</h4>
+            </div>
+            <div class="text-warning text-center mt-2">
+              <h1>{{ weatherData.main.pressure }} Pascal</h1>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="more-info w-75 m-auto">
+        <div class="btn-toolbar">
+          <div class="left-group">
+            <button
+              type="button"
+              class="btn btn-dark btn-sm"
+              style="margin: 10px"
+              (click)="more_info()"
+            >
+              {{ moreInfoText }}
+            </button>
+          </div>
+          <div class="right-group">
+            <button
+              type="button"
+              class="btn btn-dark btn-sm"
+              style="margin: 10px"
+              (click)="weatherForecastInfo()"
+            >
+              {{ forecastText }}
+            </button>
+          </div>
+        </div>
+        <div class="info-table" *ngIf="moreInfo">
+          <div class="more-info-table">
+            <table
+              class="table table-sm table-hover table-striped table-dark"
+              style="border-radius: 10px"
+            >
+              <thead>
+                <tr>
+                  <th scope="col">Attribute</th>
+                  <th scope="col">Value</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Visibility</td>
+                  <td>{{ weatherData.visibility }} Meters</td>
+                </tr>
+                <tr>
+                  <td>Sunrise</td>
+                  <td>{{ sunrise_time }}</td>
+                </tr>
+                <tr>
+                  <td>Sunset</td>
+                  <td>{{ sunset_time }}</td>
+                </tr>
+                <tr>
+                  <td>Latitude</td>
+                  <td>{{ weatherData.coord.lat }} °</td>
+                </tr>
+                <tr>
+                  <td>Longitude</td>
+                  <td>{{ weatherData.coord.lon }} °</td>
+                </tr>
+                <tr>
+                  <td>Country Code</td>
+                  <td>{{ weatherData.sys.country }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="info-table" *ngIf="showForecast">
+          <div class="more-info-table">
+            <table
+              class="table table-sm table-hover table-striped table-dark"
+              style="border-radius: 10px"
+            >
+              <thead>
+                <tr>
+                  <th scope="col">Date</th>
+                  <th scope="col">Minimum</th>
+                  <th scope="col">Maximum</th>
+                  <th scope="col">Humidity</th>
+                  <th scope="col">Sunrise</th>
+                  <th scope="col">Sunset</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let forecast of weatherForecast.daily">
+                  <td>{{ forecast.dt * 1000 | date: "dd/MM/yyyy (EEE)" }}</td>
+                  <td>{{ (forecast.temp.min-273.15).toFixed(2) }} °C</td>
+                  <td>{{ (forecast.temp.max-273.15).toFixed(2)}} °C</td>
+                  <td>{{ forecast.humidity }} %</td>
+                  <td>{{ forecast.sunrise * 1000 | date: "hh:mmaaa" }}</td>
+                  <td>{{ forecast.sunset * 1000 | date: "hh:mmaaa" }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
