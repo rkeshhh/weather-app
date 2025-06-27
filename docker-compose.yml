@@ -1,0 +1,36 @@
+services:
+  mongo:
+    image: mongo
+    ports:
+      - "27017:27017"
+
+  mysql:
+    image: mysql:8
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: users
+    ports:
+      - "3306:3306"
+
+  backend:
+    build:
+      context: C:\Users\91939\Downloads\BATCH 11 WEATHER APP (2) (1)\BATCH 11 WEATHER APP\weather\service
+    ports:
+      - "9000:9000"
+    depends_on:
+      - mongo
+      - mysql
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/users
+      SPRING_DATASOURCE_USERNAME: root
+      SPRING_DATASOURCE_PASSWORD: root
+      SPRING_DATA_MONGODB_URI: mongodb://mongo:27017/admin
+
+  frontend:
+    build:
+      context: C:\Users\91939\Downloads\BATCH 11 WEATHER APP (2) (1)\BATCH 11 WEATHER APP\weather\ui
+    ports:
+      - "4200:4200"
+    depends_on:
+      - backend
+
